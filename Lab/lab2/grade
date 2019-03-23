@@ -1,0 +1,132 @@
+"""
+Classes to regulate sudents' grades.
+"""
+from typing import Any
+
+LETTERGRADES = {'A +': 4.0, 'A': 4.0, 'A -': 3.7, 'B +': 3.3, 'B': 3.0, 'B -': 2.7, 'C +': 2.3, 'C': 2.0,
+                'C -': 1.7, 'D +': 1.3, 'D': 1.0, 'D -': 0.7, 'F': 0.0}
+
+NUMERICGRADES = {(90, 100): 4.0, (85, 89): 4.0, (80, 84): 3.7, (77, 79): 3.3, (73, 76): 3.0,
+                 (70, 72): 2.7, (67, 69): 2.3, (63, 66): 2.0, (60, 62): 1.7, (57, 59): 1.3,
+                 (53, 56): 1.0, (50, 52): 0.7, (0, 49): 0.0}
+
+
+class GradeEntry:
+    """A course grade recorder."""
+
+    def __init__(self, entries: list) -> None:
+        """
+        Initialize grade entry recorder.
+        """
+        self.entries = entries
+
+    def __str__(self) -> str:
+        """
+        Return an informative string about entries.
+        """
+        entries_string = ", ".join([str(i) for i in self.entries])
+        return type(self).__name__ + "([{}])".format(entries_string)
+
+    def __repr__(self) -> str:
+        """
+        Return a string about informations in entries.
+        """
+        return type(self).__name__ + "({})".format(self.entries)
+
+    def __eq__(self, other: Any) -> bool:
+        """
+        Return whether GradeEntry self is equivalet to other.
+        """
+        return type(self) == type(other) and self.entries == other.entries
+
+
+class LetterGradeEntry(GradeEntry):
+    """
+    Letter grade record for a course.
+    """
+
+    def __init__(self, identifier: str, grade: str, credit: float) -> None:
+        """
+        Initialize letter grade entry recorder.
+        """
+        self.identifier = identifier
+        self.grade = grade
+        self.credit = credit
+        self.weight = credit * 2
+        gpa = 0.0
+
+        for i in LETTERGRADES:
+            if self.grade == i:
+                gpa = LETTERGRADES[i]
+        self.gpa = gpa
+
+    def __str__(self) -> str:
+        """
+        Return a string about the informatio and grade of the course.
+        """
+        return "({}, {}, {})".format(self.identifier, self.grade, self.weight)
+
+    def get_gpa(self) -> float:
+        """
+        Get GPA by the grade.
+        """
+        gpa = 0.0
+
+        for i in LETTERGRADES:
+            if self.grade == i:
+                gpa = LETTERGRADES[i]
+        return gpa
+
+
+class NumericGradeEntry(GradeEntry):
+    """
+    Numercic grade record for a course.
+    """
+
+    def __init__(self, identifier: str, grade: float, credit: float) -> None:
+        """
+        Initialize numeric grade entry recorder.
+        """
+
+        self.identifier = identifier
+        self.grade = grade
+        self.credit = credit
+        self.weight = credit * 2
+        gpa = 0.0
+
+        for i in NUMERICGRADES:
+            if self.grade in range(i[0], i[1] + 1):
+                gpa = NUMERICGRADES[i]
+        self.gpa = gpa
+
+    def __str__(self) -> str:
+        """
+        Return a string about the informatio and grade of the course.
+        """
+        return "({}, {}, {})".format(self.identifier, self.grade, self.weight)
+
+    def get_gpa(self) -> float:
+        """
+        Get GPA by the grade.
+        """
+        gpa = 0.0
+
+        for i in NUMERICGRADES:
+            if self.grade in range(i[0], i[1] + 1):
+                gpa = NUMERICGRADES[i]
+        return gpa
+
+
+if __name__ == '__main__':
+    grades = [NumericGradeEntry('csc148', 87, 0.5),
+              NumericGradeEntry('mat137', 76, 1.0),
+              LetterGradeEntry('his450', 'B +', 0.5)]
+    for g in grades:
+        print("Weight: {}, grade: {}, points: {}".format(g.weight, g.grade, g.gpa))
+    total = sum([g.gpa * g.weight for g in grades])
+    total_weight = sum([g.weight for g in grades])
+    print("GPA = {}".format(total / total_weight))
+    g = GradeEntry([NumericGradeEntry('csc148', 87, 0.5),
+                    NumericGradeEntry('mat137', 76, 1.0),
+                    LetterGradeEntry('his450', 'B +', 0.5)])
+    g.__str__()
