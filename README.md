@@ -1,2 +1,2 @@
-# CSC148 Winter 2018
-Introduction to Computer Science 
+# Introduction to Computer Science
+CSC148 Winter 2018
